@@ -1,0 +1,87 @@
+---
+my_jenkins_plugins:
+  active-directory:
+    enabled: true
+    state: latest
+    with_dependencies: true
+  ansible:
+    enabled: true
+    state: latest
+    with_dependencies: true
+  caffeine-macro:
+    enabled: true
+    state: latest
+    with_dependencies: true
+  cloudbees-folder:
+    enabled: true
+    version: "6.15"
+    with_dependencies: true
+  font-awesome-api:
+    enabled: true
+    state: latest
+    with_dependencies: true
+  git:
+    enabled: true
+    state: latest
+    with_dependencies: true
+  git-server:
+    enabled: true
+    state: latest
+    with_dependencies: true
+  groovy:
+    enabled: true
+    state: latest
+    with_dependencies: true
+  jquery3-api:
+    enabled: true
+    state: latest
+    with_dependencies: true
+  junit:
+    enabled: true
+    state: latest
+    with_dependencies: true
+  logstash:
+    enabled: true
+    state: latest
+    with_dependencies: true
+  mailer:
+    enabled: true
+    state: latest
+    with_dependencies: true
+  nexus-jenkins-plugin:
+    enabled: true
+    state: latest
+    with_dependencies: true
+  token-macro:
+    enabled: true
+    state: latest
+    with_dependencies: true
+  thinBackup:
+    enabled: true
+    state: latest
+    with_dependencies: true
+  workflow-cps:
+    enabled: true
+    state: latest
+    with_dependencies: true
+  workflow-cps-global-lib:
+    enabled: true
+    state: latest
+    with_dependencies: true
+  workflow-durable-task-step:
+    enabled: true
+    state: latest
+    with_dependencies: true
+  workflow-job:
+    enabled: true
+    state: latest
+    with_dependencies: true
+  workflow-scm-step:
+    enabled: true
+    state: latest
+    with_dependencies: true
+  workflow-support:
+    enabled: true
+    state: latest
+    with_dependencies: true
+...

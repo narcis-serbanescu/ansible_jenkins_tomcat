@@ -1,0 +1,64 @@
+---
+- name: Stop Tomcat
+  systemd:
+    name: tomcat
+    state: stopped
+
+- name: Remove Jenkins installation dirs if they exists
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ tomcat_home }}/webapps"
+    - "{{ tomcat_home }}/.jenkins"
+    - "{{ jenkins_home }}"
+
+- name: Make Jenkins dirs
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+    owner: tomcat
+    group: tomcat
+  loop:
+    - "{{ jenkins_home }}"
+    - "{{ tomcat_home }}/webapps"
+
+- name: Jenkins download in tmp and Tomcat webapp
+  get_url:
+    url: "{{ jenkins_url }}"
+    dest: "{{ item }}"
+  loop:
+    - "{{ jenkins_dest }}"
+    - "{{ tomcat_home }}/webapps/ROOT.war"
+
+- name: Start Tomcat
+  systemd:
+    name: tomcat
+    state: started
+
+- name: Setting Jenkins home path in Tomcat
+  lineinfile:
+    path: "{{ tomcat_home }}/conf/context.xml"
+    line: '<Environment name="JENKINS_HOME" value="{{ jenkins_home }}" type="java.lang.String" override="false"/>'
+    insertbefore: '^</Context>'
+  notify: restart tomcat
+
+- name: Call handlers now to restart Tomcat
+  meta: flush_handlers
+
+- name: Restart Tomcat
+  systemd:
+    name: tomcat
+    state: restarted
+
+- name: Get Jenkins admin password
+  command:
+    # cat /opt/tomcat/.jenkins/secrets/initialAdminPassword
+    cat "{{ jenkins_home }}/secrets/initialAdminPassword"
+  register: admin_pwd
+
+- name: Display Jenkins Admin password
+  debug:
+    var: admin_pwd.stdout
+...

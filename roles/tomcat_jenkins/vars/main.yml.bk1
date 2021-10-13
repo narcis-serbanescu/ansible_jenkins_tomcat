@@ -1,0 +1,9 @@
+---
+my_jenkins_plugins:
+  active-directory:
+    enabled: true
+    with_dependencies: true
+  ansible:
+    enabled: true
+    with_dependencies: true
+...

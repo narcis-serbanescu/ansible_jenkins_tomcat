@@ -1,0 +1,27 @@
+---
+- name: Populate service facts
+  service_facts:
+
+- name: Install Tomcat
+  include_tasks: tomcat_install_mp.yml
+  when: ansible_facts.services["tomcat.service"] is not defined
+
+- name: Populate service facts
+  service_facts:
+
+- name: Message if Tomcat is installed
+  debug:
+    var: ansible_facts.services["tomcat.service"]
+
+- name: Message if Tomcat is installed
+  debug:
+    msg: Tomcat is  installed!
+  when: ansible_facts.services["tomcat.service"] is defined
+
+- name: Install Jenkins
+  include_tasks: jenkins_install.yml
+  when: ansible_facts.services["tomcat.service"] is defined
+
+- name: Customize Jenkins
+  include_tasks: jenkins_customization.yml
+...

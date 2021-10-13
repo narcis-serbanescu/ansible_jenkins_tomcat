@@ -1,0 +1,81 @@
+---
+- name: Install Jenkins plugins
+  jenkins_plugin:
+    name: "{{ item.key }}"
+    url_username: admin
+    url_password: "{{ admin_pwd.stdout }}"
+    # url: "http://localhost:8080/jenkins"
+    url: "http://localhost:8080"
+  with_dict: "{{ my_jenkins_plugins }}"
+  ignore_errors: true
+  notify: restart tomcat
+  register: plugin_result
+  until: plugin_result is success
+  retries: 3
+  delay: 2
+
+# https://stackoverflow.com/questions/42219781/gets-error-cannot-get-csrf-when-trying-to-install-jenkins-plugin-using-ansible
+- name: Jenkins Skip startUp for MI
+  lineinfile:
+    path: "{{ tomcat_home }}/bin/catalina.sh"
+    insertafter: '^JAVA_OPTS='
+    firstmatch: true
+    line: 'JAVA_OPTS="$JAVA_OPTS -Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"'
+    backup: true
+  register: result_skip_startup_wizard
+
+
+- name: Call handlers now to restart Tomcat
+  meta: flush_handlers
+
+- name: Restart Tomcat
+  systemd:
+    name: tomcat
+    state: restarted
+
+- name: Waiting for Jenkins to start up
+  uri:
+    url: http://localhost:8080
+    user: admin
+    password: "{{ admin_pwd.stdout }}"
+    method: GET
+    force_basic_auth: true
+    status_code: 200
+    timeout: 5
+  register: jenkins_service_status
+  # Keep trying for 5 mins in 5 sec intervals
+  retries: 60
+  delay: 5
+  until: >
+     'status' in jenkins_service_status and
+     jenkins_service_status['status'] == 200
+
+- name: Display connections details
+  debug:
+    var: jenkins_service_status
+
+# https://stackoverflow.com/questions/60940715/add-jenkins-user-with-ansible-or-curl
+- name: JENKINS-CTEDENTIALS | Create CRUMB authentication request
+  uri:
+    url: http://localhost:8080/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,%22:%22,//crumb)
+    user: admin
+    password: "{{ admin_pwd.stdout }}"
+    force_basic_auth: true
+    return_content: true
+  register: crumb
+
+- name: JENKINS-CTEDENTIALS | Add Jenkins administration account
+  uri:
+    method: POST
+    url: http://localhost:8080/securityRealm/createAccountByAdmin
+    user: admin
+    password: "{{ admin_pwd.stdout }}"
+    force_basic_auth: true
+    follow_redirects: all
+    headers:
+      Jenkins-Crumb: '{{ crumb.content.split(":")[1] }}'
+      Cookie: "{{ crumb.set_cookie }}"
+    # body: 'username=user2&password1=pass&password2=pass&fullname=fullname&email=bubba%40dummy.bg'
+    body: 'username={{ jenkins_user }}&password1={{ jenkins_pass }}&password2={{ jenkins_pass }}&fullname={{ jenkins_fullname }}&email={{ jenkins_email }}'
+  notify: restart tomcat
+...

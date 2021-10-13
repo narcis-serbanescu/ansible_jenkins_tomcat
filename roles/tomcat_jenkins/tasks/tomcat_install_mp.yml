@@ -1,0 +1,85 @@
+---
+- name: Install OpenJDK, Firewalld
+  yum:
+    name:
+      - firewalld
+      - java-1.8.0-openjdk
+    state: latest
+  register: install_result
+  until: install_result is success
+  retries: 3
+  delay: 2
+
+- name: Add tomcat group
+  group:
+    name: tomcat
+
+- name: Add "tomcat" user
+  user:
+    name: tomcat
+    group: tomcat
+    home: "{{ tomcat_home }}"
+    createhome: false
+    system: true
+
+- name: Download Tomcat
+  get_url:
+    url: "{{ tomcat_archive_url }}"
+    dest: "{{ tomcat_archive_dest }}"
+
+- name: Create a tomcat directory
+  file:
+    path: "{{ tomcat_home }}"
+    state: directory
+    owner: tomcat
+    group: tomcat
+
+- name: Extract tomcat archive
+  unarchive:
+    src: "{{ tomcat_archive_dest }}"
+    dest: "{{ tomcat_home }}"
+    owner: tomcat
+    group: tomcat
+    remote_src: true
+    extra_opts: "--strip-components=1"
+    creates: "{{ tomcat_home }}/bin"
+
+- name: Copy tomcat service file
+  template:
+    src: templates/tomcat.service.j2
+    dest: /etc/systemd/system/tomcat.service
+  when: ansible_service_mgr == "systemd"
+
+- name: Start and enable Firewall and Tomcat services
+  systemd:
+    daemon_reload: true
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop:
+    "{{ srvs }}"
+
+- name: Open Tomcat port on the firewall
+  firewalld:
+    port: 8080/tcp
+    permanent: true
+    state: enabled
+    immediate: true
+  when: ansible_service_mgr == "systemd"
+
+- name: Set UI access credentials
+  template:
+    src: tomcat-users.xml.j2
+    dest: "{{ tomcat_home }}/conf/tomcat-users.xml"
+  notify: restart tomcat
+
+- name: Allow access to Manager and Host Manager apps from any IP
+  template:
+    src: context.xml.j2
+    dest: "{{ item }}"
+  with_items:
+    - "{{ tomcat_home }}/webapps/host-manager/META-INF/context.xml"
+    - "{{ tomcat_home }}/webapps/manager/META-INF/context.xml"
+  notify: restart tomcat
+
+...
