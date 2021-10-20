@@ -1,17 +1,17 @@
-Role Name
+Installing Jenkins LTS as servlet in Tomcat 9   
 =========
 
-Runnig Jenkins LTS as servlet in Tomcat 9   
+Runnig Jenkins LTS with a series of plugins as servlet in Tomcat 9   
 
 Requirements
 ------------
 
-Variables defined in playbook bellow should be added in a vault file
+Sensitive variables defined in playbook bellow should have been added in a vault file
 
 Role Variables
 --------------
 
-Variables can be find in defaults and var files    
+Installation variables can be found in defaults folder, while customization / plugins variables are defined in vars folder.                  
 
 Dependencies
 ------------
@@ -50,4 +50,4 @@ BSD
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+narcis.serbanescu@gmail.com      

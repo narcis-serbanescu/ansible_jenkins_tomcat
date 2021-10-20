@@ -1,0 +1,31 @@
+---
+- name: Uninstall Tomcat and Jenkins
+  hosts: all
+  become: true
+  vars:
+    - tomcat_ver: 9.0.45
+    - install_files:
+        - /etc/systemd/system/tomcat.service
+        - /tmp/jenkins.war
+        - "/tmp/apache-tomcat-{{ tomcat_ver }}.tar.gz"
+        - /opt/jenkins_home
+        - /opt/tomcat
+
+  tasks:
+    - name: Remove java-1.8.0-openjdk
+      yum:
+        name: java-1.8.0-openjdk
+        state: absent
+
+    - name: Stop and disable Tomcat service
+      systemd:
+        name: tomcat.service
+        state: stopped
+        enabled: false
+
+    - name: Remove installation files, Tomcat srv file
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop: "{{ install_files }}"
+...
