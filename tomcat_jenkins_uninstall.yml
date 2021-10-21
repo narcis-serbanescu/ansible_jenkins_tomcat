@@ -2,6 +2,7 @@
 - name: Uninstall Tomcat and Jenkins
   hosts: all
   become: true
+  gather_facts: false
   vars:
     - tomcat_ver: 9.0.45
     - install_files:

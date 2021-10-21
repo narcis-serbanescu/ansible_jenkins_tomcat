@@ -1,7 +1,7 @@
 ---
 # https://github.com/jmutai/tomcat-ansible/blob/master/tomcat-setup.yml
 - name: Run Jenkins as servlet in Tomcat
-  gather_facts: true
+  gather_facts: false
   become: true
   hosts: all
   vars:
