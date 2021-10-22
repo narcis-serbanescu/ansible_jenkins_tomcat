@@ -2,7 +2,6 @@
 - name: Uninstall Tomcat and Jenkins
   hosts: all
   become: true
-  gather_facts: false
   vars:
     - tomcat_ver: 9.0.45
     - install_files:
@@ -18,15 +17,27 @@
         name: java-1.8.0-openjdk
         state: absent
 
+    - name: Populate service facts
+      service_facts:
+
     - name: Stop and disable Tomcat service
       systemd:
         name: tomcat.service
         state: stopped
         enabled: false
+      when: ansible_facts['services']['tomcat.service'] is defined
+      # ignore_errors: true
 
     - name: Remove installation files, Tomcat srv file
       file:
         path: "{{ item }}"
         state: absent
       loop: "{{ install_files }}"
+
+    - name: Remove installation user
+      user:
+        name: tomcat
+        group: tomcat
+        state: absent
+        remove: true
 ...
