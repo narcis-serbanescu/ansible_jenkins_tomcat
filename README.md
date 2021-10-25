@@ -1,7 +1,10 @@
-Installing Jenkins LTS as servlet in Tomcat 9   
+Use of Ansible in installing Tomcat and Jenkins LTS            
 =========
 
-Runnig Jenkins LTS with a series of plugins as servlet in Tomcat 9   
+The purpose of the Ansible role:
+- Insall Tomcat 9 
+- Install and customize Jenkins LTS as servlet in Tomcat 9       
+- Add a series of Jenkins plugins     
 
 Requirements
 ------------
@@ -16,7 +19,7 @@ Installation variables can be found in defaults folder, while customization / pl
 Dependencies
 ------------
 
-Jenkins LTS on a RHEL79 OS with Tomcat 9.0.45    
+Basic installation of RHEL79 OS, that will host Tomcat and Jenkins installations.         
    
 Example Playbook
 ----------------

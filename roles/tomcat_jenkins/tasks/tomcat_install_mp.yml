@@ -3,7 +3,8 @@
   yum:
     name:
       - firewalld
-      - java-1.8.0-openjdk
+      # - java-1.8.0-openjdk
+      - java-11-openjdk
     state: latest
   register: install_result
   until: install_result is success
