@@ -1,4 +1,9 @@
 ---
+- name: Remove any JDK previously installed
+  yum:
+    name: java-*
+    state: absent
+
 - name: Install OpenJDK, Firewalld
   yum:
     name:

@@ -19,7 +19,9 @@ Installation variables can be found in defaults folder, while customization / pl
 Dependencies
 ------------
 
-Basic installation of RHEL79 OS, that will host Tomcat and Jenkins installations.         
+Basic installation of RHEL79 OS, that will host Tomcat and Jenkins installations.   
+Any existing JDK package will be removed by the role.     
+
    
 Example Playbook
 ----------------

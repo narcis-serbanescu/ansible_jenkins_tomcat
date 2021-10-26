@@ -12,9 +12,10 @@
         - /opt/tomcat
 
   tasks:
-    - name: Remove java-1.8.0-openjdk
+    - name: Remove java-openjdk
       yum:
-        name: java-1.8.0-openjdk
+        # name: java-1.8.0-openjdk
+        name: java-*
         state: absent
 
     - name: Populate service facts
