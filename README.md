@@ -1,10 +1,10 @@
 Use of Ansible in installing Tomcat and Jenkins LTS            
 =========
 
-The purpose of the above Ansible role:
-- Install Tomcat 9 
-- Install and customize Jenkins LTS as servlet in Tomcat 9       
-- Add a series of Jenkins plugins     
+The main purposes of this Ansible role is to automate:
+- Tomcat 9 installation
+- Installaltion and customization Jenkins LTS as a servlet in Tomcat 9       
+- Add a series of Plugins to Jenkins          
 
 Requirements
 ------------
